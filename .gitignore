@@ -1,3 +1,9 @@
 .DS_Store
-received_movies/*
-!received_movies/.gitkeep
+client_received_files/*
+!client_received_files/.gitkeep
+server_received_files/*
+!server_received_files/.gitkeep
+server_compressed_files/*
+!server_compressed_files/.gitkeep
+server_command_logs/*
+!server_command_logs/.gitkeep
