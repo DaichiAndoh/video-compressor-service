@@ -1,1 +1,3 @@
 .DS_Store
+received_movies/*
+!received_movies/.gitkeep
