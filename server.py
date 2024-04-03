@@ -25,7 +25,7 @@ class VideoCompressor:
             print("\n[*] connected")
 
             # receive request data
-            received_file_path, compression_ratio = self.receive_request_data(
+            received_file_path, crf_value = self.receive_request_data(
                 connection,
                 client_port,
             )
@@ -37,7 +37,7 @@ class VideoCompressor:
                 # compress file
                 compressed_file_path, compressed_file_size = self.compress_file(
                     received_file_path,
-                    str(compression_ratio),
+                    str(crf_value),
                     client_port,
                 )
                 # send success response
@@ -54,7 +54,7 @@ class VideoCompressor:
             file_size = int.from_bytes(connection.recv(47))
             config_data = json.loads(connection.recv(config_data_size).decode())
             file_type = connection.recv(file_type_size).decode()
-            compression_ratio = config_data["compression_ratio"]
+            crf_value = config_data["crf_value"]
 
             received_bytes = 0
             received_file_path = f"{RECEIVED_FILES_DIR}received_{client_port}.{file_type}"
@@ -67,7 +67,7 @@ class VideoCompressor:
                     received_bytes += len(file_data)
 
             print(f"[*] received file size: {file_size} bytes")
-            return received_file_path, compression_ratio
+            return received_file_path, crf_value
         except:
             print("[!] error occurred: request data reception failure")
             return "", 0
@@ -88,12 +88,12 @@ class VideoCompressor:
         finally:
             connection.close()
 
-    def compress_file(self, received_file_path, compression_ratio, client_port):
+    def compress_file(self, received_file_path, crf_value, client_port):
         try:
             print("[*] compressing file...")
 
             compressed_file_path = f"{COMPRESSED_FILES_DIR}compressed_{client_port}.mp4"
-            command = ["ffmpeg", "-i", received_file_path, "-crf", compression_ratio, compressed_file_path]
+            command = ["ffmpeg", "-i", received_file_path, "-crf", crf_value, compressed_file_path]
 
             with open(f"{COMMAND_LOGS_DIR}logs_{client_port}.txt", "w") as log_file:
                 subprocess.run(command, stdout=log_file, stderr=subprocess.STDOUT)

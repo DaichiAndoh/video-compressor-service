@@ -20,9 +20,9 @@ class Client:
 
     def run(self):
         file_type, file_path, file_size = self.get_file_info()
-        compression_ratio = self.get_compression_ratio()
+        crf_value = self.get_crf_value()
 
-        result = self.send_request_data(file_type, file_path, file_size, compression_ratio)
+        result = self.send_request_data(file_type, file_path, file_size, crf_value)
         if not result:
             self.tcp_client_socket.close()
             return
@@ -53,25 +53,25 @@ class Client:
 
         return file_type, file_path, file_size
 
-    def get_compression_ratio(self):
-        compression_ratio = None
-        while compression_ratio is None:
-            entered_value = input("[-] enter compression ratio (0-51): ")
+    def get_crf_value(self):
+        crf_value = None
+        while crf_value is None:
+            entered_value = input("[-] enter crf value (0-51): ")
 
             try:
-                compression_ratio = int(entered_value)
-                if compression_ratio >= 0 and compression_ratio <= 51:
-                    return compression_ratio
+                crf_value = int(entered_value)
+                if crf_value >= 0 and crf_value <= 51:
+                    return crf_value
                 else:
                     raise Exception
             except:
-                compression_ratio = None
-                print("[!] please enter compression ratio in the range of 0 to 51")
+                crf_value = None
+                print("[!] please enter crf value in the range of 0 to 51")
 
-    def send_request_data(self, file_type, file_path, file_size, compression_ratio):
+    def send_request_data(self, file_type, file_path, file_size, crf_value):
         try:
             config_data = json.dumps({
-                "compression_ratio": compression_ratio,
+                "crf_value": crf_value,
             })
 
             request_data_excluding_payload = \
@@ -110,6 +110,7 @@ class Client:
                         f.write(file_data)
                         received_bytes += len(file_data)
 
+                print(f"[*] compressed file size: {compressed_file_size} bytes")
                 print("[*] response data reception success")
         except:
             print("[!] error occurred: response data reception failure")
